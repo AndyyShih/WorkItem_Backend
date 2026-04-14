@@ -65,7 +65,7 @@ builder.Services.AddSwaggerGen(c =>
 
 #region 設定EF Core連線
 
-builder.Services.AddDbContext<NewProjectContext>(option =>
+builder.Services.AddDbContext<WorkItemContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("MyWorkItemDB"))
 );
 

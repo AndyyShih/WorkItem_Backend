@@ -8,10 +8,10 @@ namespace DataAccess.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly NewProjectContext _dbContext;
+        private readonly WorkItemContext _dbContext;
         private readonly IMapper _mapper;
 
-        public UserRepository(NewProjectContext dbContext , IMapper mapper)
+        public UserRepository(WorkItemContext dbContext , IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
