@@ -1,0 +1,14 @@
+﻿using AutoMapper;
+using DataAccess.DTOs.User;
+using DataAccess.Models;
+
+namespace DataAccess.AutoMapper
+{
+    public class UserProfile : Profile
+    {
+        public UserProfile()
+        {
+            CreateMap<User, GetUserOutputDto>();
+        }
+    }
+}
