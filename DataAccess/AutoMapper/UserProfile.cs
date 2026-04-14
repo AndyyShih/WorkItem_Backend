@@ -9,6 +9,8 @@ namespace DataAccess.AutoMapper
         public UserProfile()
         {
             CreateMap<User, GetUserOutputDto>();
+            CreateMap<UserWorkItemStatus, UserWorkItemStatusDto>();
+            CreateMap<WorkItem, WorkItemDto>();
         }
     }
 }

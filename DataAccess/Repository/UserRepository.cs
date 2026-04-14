@@ -19,7 +19,11 @@ namespace DataAccess.Repository
 
         public async Task<GetUserOutputDto> GetUserAsync(GetUserInputDto input)
         {
-            var query = await _dbContext.Users.Where(x => x.Name.Contains(input.Name)).FirstOrDefaultAsync();
+            var query = await _dbContext.Users
+                .Include(u => u.UserWorkItemStatuses)
+                .ThenInclude(s => s.WorkItem)
+                .Where(x => x.Id == input.Id)
+                .FirstOrDefaultAsync();
 
             var result = _mapper.Map<User , GetUserOutputDto>(query);
             return result;

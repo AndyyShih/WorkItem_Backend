@@ -1,18 +1,22 @@
-﻿namespace DataAccess.DTOs.User
+﻿using System.Collections.Generic;
+
+namespace DataAccess.DTOs.User
 {
     public class GetUserOutputDto
     {
         /// <summary>
         /// 識別編碼
         /// </summary>
-        public int ID { get; set; }
+        public int Id { get; set; }
         /// <summary>
-        /// 姓名
+        /// 使用者帳號
         /// </summary>
-        public string Name { get; set; }
+        public string Username { get; set; }
         /// <summary>
-        /// 手機
+        /// 角色
         /// </summary>
-        public string Tel { get; set; }
+        public string Role { get; set; }
+
+        public List<UserWorkItemStatusDto> UserWorkItemStatuses { get; set; }
     }
 }

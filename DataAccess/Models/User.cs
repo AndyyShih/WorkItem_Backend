@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Models;
 
-[Table("User")]
+[Table("Users")]
 public partial class User
 {
     /// <summary>
@@ -19,16 +19,25 @@ public partial class User
     public int Id { get; set; }
 
     /// <summary>
-    /// 姓名
+    /// 使用者帳號
     /// </summary>
     [Required]
     [StringLength(50)]
-    public string Name { get; set; }
+    public string Username { get; set; }
 
     /// <summary>
-    /// 手機
+    /// 密碼雜湊
     /// </summary>
     [Required]
-    [StringLength(10)]
-    public string Tel { get; set; }
+    public string PasswordHash { get; set; }
+
+    /// <summary>
+    /// 角色 ('Admin' 或 'User')
+    /// </summary>
+    [Required]
+    [StringLength(20)]
+    public string Role { get; set; }
+
+    // Navigation properties
+    public virtual ICollection<UserWorkItemStatus> UserWorkItemStatuses { get; set; }
 }

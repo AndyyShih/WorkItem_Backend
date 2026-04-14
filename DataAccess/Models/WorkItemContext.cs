@@ -6,22 +6,44 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Models;
 
-public partial class NewProjectContext : DbContext
+public partial class WorkItemContext : DbContext
 {
-    public NewProjectContext(DbContextOptions<NewProjectContext> options)
+    public WorkItemContext(DbContextOptions<WorkItemContext> options)
         : base(options)
     {
     }
 
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<WorkItem> WorkItems { get; set; }
+    public virtual DbSet<UserWorkItemStatus> UserWorkItemStatuses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(e => e.Id).HasComment("識別編碼");
-            entity.Property(e => e.Name).HasComment("姓名");
-            entity.Property(e => e.Tel).HasComment("手機");
+            entity.Property(e => e.Username).HasMaxLength(50).IsRequired().HasComment("使用者帳號");
+            entity.Property(e => e.PasswordHash).IsRequired().HasComment("密碼雜湊");
+            entity.Property(e => e.Role).HasMaxLength(20).IsRequired().HasComment("角色");
+
+            entity.HasMany(e => e.UserWorkItemStatuses).WithOne(e => e.User).HasForeignKey(e => e.UserId);
+        });
+
+        modelBuilder.Entity<WorkItem>(entity =>
+        {
+            entity.Property(e => e.Id).HasComment("識別編碼");
+            entity.Property(e => e.Title).HasMaxLength(200).IsRequired().HasComment("標題");
+            entity.Property(e => e.Description).HasComment("描述");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()").HasComment("建立時間");
+
+            entity.HasMany(e => e.UserWorkItemStatuses).WithOne(e => e.WorkItem).HasForeignKey(e => e.WorkItemId);
+        });
+
+        modelBuilder.Entity<UserWorkItemStatus>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.WorkItemId });
+            entity.Property(e => e.IsConfirmed).HasDefaultValue(false).HasComment("是否已確認");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETDATE()").HasComment("更新時間");
         });
 
         OnModelCreatingPartial(modelBuilder);
