@@ -1,9 +1,14 @@
-﻿namespace WorkItem_Backend.DependencyInjectionTool
+﻿using Common.Helpers;
+
+namespace WorkItem_Backend.DependencyInjectionTool
 {
     public static class DependencyInjectionTool
     {
         public static void AddDIContainer(IServiceCollection services)
         {
+            //其他註冊
+            services.AddSingleton<JwtHelper>();
+
             // 掃描 Service 和 Repository 類別
             var servs = typeof(BusinessRule.Services.UserService).Assembly;
             var repos = typeof(DataAccess.Repository.UserRepository).Assembly;
