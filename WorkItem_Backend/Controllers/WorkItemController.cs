@@ -45,7 +45,7 @@ namespace WorkItem_Backend.Controllers
         /// 取得特定工作的詳情
         /// </summary>
         [HttpPost]
-        public async Task<ApiResponse<WorkItemDetailDto>> GetDetail([FromBody] GetWorkItemDetailReq req)
+        public async Task<ApiResponse<WorkItemDetailDto>> GetWorkItemDetail([FromBody] GetWorkItemDetailReq req)
         {
             var userIdStr = User.FindFirst("UserId")?.Value;
 
@@ -73,7 +73,7 @@ namespace WorkItem_Backend.Controllers
         /// 批次確認工作項目
         /// </summary>
         [HttpPost]
-        public async Task<ApiResponse<string>> BatchConfirm([FromBody] BatchConfirmReq req)
+        public async Task<ApiResponse<string>> BatchWorkItemConfirm([FromBody] BatchConfirmReq req)
         {
             var userIdStr = User.FindFirst("UserId")?.Value;
             if (!int.TryParse(userIdStr, out int userId))
@@ -92,7 +92,7 @@ namespace WorkItem_Backend.Controllers
         /// 批次撤銷確認項目
         /// </summary>
         [HttpPost]
-        public async Task<ApiResponse<string>> BatchCancel([FromBody] BatchConfirmReq req)
+        public async Task<ApiResponse<string>> BatchWorkItemCancel([FromBody] BatchConfirmReq req)
         {
             var userIdStr = User.FindFirst("UserId")?.Value;
             if (!int.TryParse(userIdStr, out int userId))
@@ -104,6 +104,60 @@ namespace WorkItem_Backend.Controllers
 
             return result
                 ? ApiResponseFactory.CreateSuccessResult("批次撤銷成功")
+                : ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+        }
+
+        /// <summary>
+        /// 新增工作項目 (限 Admin)
+        /// </summary>
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<ApiResponse<string>> CreateWorkItem([FromBody] CreateWorkItemReq req)
+        {
+            if (string.IsNullOrEmpty(req.Title))
+            {
+                return ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+            }
+
+            var result = await _workItemService.CreateWorkItemAsync(req);
+            return result
+                ? ApiResponseFactory.CreateSuccessResult("新增成功")
+                : ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+        }
+
+        /// <summary>
+        /// 修改工作項目 (限 Admin)
+        /// </summary>
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<ApiResponse<string>> UpdateWorkItem([FromBody] UpdateWorkItemReq req)
+        {
+            if (req.Id <= 0 || string.IsNullOrEmpty(req.Title))
+            {
+                return ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+            }
+
+            var result = await _workItemService.UpdateWorkItemAsync(req);
+            return result
+                ? ApiResponseFactory.CreateSuccessResult("修改成功")
+                : ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+        }
+
+        /// <summary>
+        /// 刪除工作項目 (限 Admin)
+        /// </summary>
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<ApiResponse<string>> DeleteWorkItem([FromBody] DeleteWorkItemReq req)
+        {
+            if (req.Id <= 0)
+            {
+                return ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+            }
+
+            var result = await _workItemService.DeleteWorkItemAsync(req.Id);
+            return result
+                ? ApiResponseFactory.CreateSuccessResult("刪除成功")
                 : ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
         }
     }

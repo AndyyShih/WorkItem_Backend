@@ -59,5 +59,42 @@ namespace DataAccess.Repository
 
             return await _context.SaveChangesAsync() >= 0;
         }
+
+        public async Task<bool> AddAsync(WorkItem item)
+        {
+            item.CreatedAt = DateTime.Now;
+            _context.WorkItems.Add(item);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> UpdateAsync(WorkItem item)
+        {
+            // 追蹤實體狀態
+            _context.Entry(item).State = EntityState.Modified;
+            // 確保 CreatedAt 不會被意外修改
+            _context.Entry(item).Property(x => x.CreatedAt).IsModified = false;
+
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var item = await _context.WorkItems
+                .Include(w => w.UserWorkItemStatuses)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            if (item == null) return false;
+
+            //先移除所有相關的使用者狀態紀錄
+            if (item.UserWorkItemStatuses.Any())
+            {
+                _context.UserWorkItemStatuses.RemoveRange(item.UserWorkItemStatuses);
+            }
+
+            //移除工作項目本體
+            _context.WorkItems.Remove(item);
+
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

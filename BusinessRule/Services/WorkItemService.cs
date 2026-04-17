@@ -1,6 +1,7 @@
 ﻿using BusinessRule.Interfaces;
 using DataAccess.DTOs.WorkItem;
 using DataAccess.IRepository;
+using DataAccess.Models;
 
 namespace BusinessRule.Services
 {
@@ -80,6 +81,49 @@ namespace BusinessRule.Services
             }
 
             return await _workItemRepository.UpsertUserStatusesAsync(userId, workItemIds, isConfirmed);
+        }
+
+        /// <summary>
+        /// 新增工作項目
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        public async Task<bool> CreateWorkItemAsync(CreateWorkItemReq req)
+        {
+            var entity = new WorkItem
+            {
+                Title = req.Title,
+                Description = req.Description,
+                CreatedAt = DateTime.Now
+            };
+            return await _workItemRepository.AddAsync(entity);
+        }
+
+        /// <summary>
+        /// 修改工作項目
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateWorkItemAsync(UpdateWorkItemReq req)
+        {
+            // 這裡可以先檢查 ID 是否存在
+            var entity = new WorkItem
+            {
+                Id = req.Id,
+                Title = req.Title,
+                Description = req.Description
+            };
+            return await _workItemRepository.UpdateAsync(entity);
+        }
+
+        /// <summary>
+        /// 刪除工作項目
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteWorkItemAsync(int id)
+        {
+            return await _workItemRepository.DeleteAsync(id);
         }
     }
 }

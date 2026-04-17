@@ -10,7 +10,6 @@ namespace BusinessRule.Interfaces
         /// <param name="userId"></param>
         /// <returns></returns>
         Task<IEnumerable<WorkItemDto>> GetUserWorkItemsAsync(int userId);
-
         /// <summary>
         /// 取得工作項目詳細資訊，包含使用者的確認狀態
         /// </summary>
@@ -18,7 +17,6 @@ namespace BusinessRule.Interfaces
         /// <param name="userId"></param>
         /// <returns></returns>
         Task<WorkItemDetailDto?> GetWorkItemDetailAsync(int id, int userId);
-
         /// <summary>
         /// 批次更新使用者對多個工作項目的確認狀態
         /// </summary>
@@ -27,5 +25,23 @@ namespace BusinessRule.Interfaces
         /// <param name="isConfirmed"></param>
         /// <returns></returns>
         Task<bool> BatchUpdateStatusAsync(int userId, List<int> workItemIds, bool isConfirmed);
+        /// <summary>
+        /// 新增工作項目
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        Task<bool> CreateWorkItemAsync(CreateWorkItemReq req);
+        /// <summary>
+        /// 修改工作項目
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        Task<bool> UpdateWorkItemAsync(UpdateWorkItemReq req);
+        /// <summary>
+        /// 刪除工作項目
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<bool> DeleteWorkItemAsync(int id);
     }
 }
