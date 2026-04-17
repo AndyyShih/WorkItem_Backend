@@ -21,5 +21,12 @@ namespace DataAccess.Repository
                 .OrderByDescending(w => w.CreatedAt)
                 .ToListAsync();
         }
+
+        public async Task<WorkItem?> GetDetailWithStatusAsync(int id, int userId)
+        {
+            return await _context.WorkItems
+                .Include(w => w.UserWorkItemStatuses.Where(s => s.UserId == userId))
+                .FirstOrDefaultAsync(w => w.Id == id);
+        }
     }
 }

@@ -40,5 +40,33 @@ namespace WorkItem_Backend.Controllers
 
             return ApiResponseFactory.CreateSuccessResult(result);
         }
+
+        /// <summary>
+        /// 取得特定工作的詳情
+        /// </summary>
+        [HttpPost]
+        public async Task<ApiResponse<WorkItemDetailDto>> GetDetail([FromBody] GetWorkItemDetailReq req)
+        {
+            var userIdStr = User.FindFirst("UserId")?.Value;
+
+            if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId))
+            {
+                return ApiResponseFactory.CreateErrorResult<WorkItemDetailDto>(ErrorCode.DATA_EMPTY);
+            }
+
+            if (req == null || req.Id <= 0)
+            {
+                return ApiResponseFactory.CreateErrorResult<WorkItemDetailDto>(ErrorCode.DATA_EMPTY);
+            }
+
+            var result = await _workItemService.GetWorkItemDetailAsync(req.Id, userId);
+
+            if (result == null)
+            {
+                return ApiResponseFactory.CreateErrorResult<WorkItemDetailDto>(ErrorCode.DATA_EMPTY);
+            }
+
+            return ApiResponseFactory.CreateSuccessResult(result);
+        }
     }
 }

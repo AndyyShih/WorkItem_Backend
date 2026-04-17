@@ -33,5 +33,25 @@ namespace BusinessRule.Services
                 };
             });
         }
+
+        public async Task<WorkItemDetailDto?> GetWorkItemDetailAsync(int id, int userId)
+        {
+            var workItem = await _workItemRepository.GetDetailWithStatusAsync(id, userId);
+
+            if (workItem == null) return null;
+
+            var statusRecord = workItem.UserWorkItemStatuses.FirstOrDefault();
+
+            return new WorkItemDetailDto
+            {
+                Id = workItem.Id,
+                Title = workItem.Title,
+                Description = workItem.Description,
+                // 邏輯判定：如果有紀錄且已確認則為 confirmed，否則為 pending
+                Status = (statusRecord?.IsConfirmed ?? false) ? "confirmed" : "pending",
+                CreatedAt = workItem.CreatedAt,
+                UpdatedAt = statusRecord?.UpdatedAt // 這邊對應你 Response 的 updatedAt
+            };
+        }
     }
 }
