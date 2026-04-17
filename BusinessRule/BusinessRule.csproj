@@ -9,10 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
     <Folder Include="Extensions\" />
     <Folder Include="Attributes\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>

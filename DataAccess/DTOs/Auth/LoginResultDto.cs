@@ -1,0 +1,9 @@
+﻿namespace DataAccess.DTOs.Auth
+{
+    public class LoginResultDto
+    {
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public string Role { get; set; }
+    }
+}
