@@ -16,5 +16,10 @@ namespace DataAccess.IRepository
         /// <param name="userId"></param>
         /// <returns></returns>
         Task<WorkItem?> GetDetailWithStatusAsync(int id, int userId);
+
+        /// <summary>
+        /// 批次更新或新增使用者的工作狀態
+        /// </summary>
+        Task<bool> UpsertUserStatusesAsync(int userId, List<int> workItemIds, bool isConfirmed);
     }
 }

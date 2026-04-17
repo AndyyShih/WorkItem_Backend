@@ -68,5 +68,43 @@ namespace WorkItem_Backend.Controllers
 
             return ApiResponseFactory.CreateSuccessResult(result);
         }
+
+        /// <summary>
+        /// 批次確認工作項目
+        /// </summary>
+        [HttpPost]
+        public async Task<ApiResponse<string>> BatchConfirm([FromBody] BatchConfirmReq req)
+        {
+            var userIdStr = User.FindFirst("UserId")?.Value;
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                return ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+            }
+
+            var result = await _workItemService.BatchUpdateStatusAsync(userId, req.WorkItemIds, true);
+
+            return result
+                ? ApiResponseFactory.CreateSuccessResult("批次確認成功")
+                : ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+        }
+
+        /// <summary>
+        /// 批次撤銷確認項目
+        /// </summary>
+        [HttpPost]
+        public async Task<ApiResponse<string>> BatchCancel([FromBody] BatchConfirmReq req)
+        {
+            var userIdStr = User.FindFirst("UserId")?.Value;
+            if (!int.TryParse(userIdStr, out int userId))
+            {
+                return ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+            }
+
+            var result = await _workItemService.BatchUpdateStatusAsync(userId, req.WorkItemIds, false);
+
+            return result
+                ? ApiResponseFactory.CreateSuccessResult("批次撤銷成功")
+                : ApiResponseFactory.CreateErrorResult<string>(ErrorCode.DATA_EMPTY);
+        }
     }
 }

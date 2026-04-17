@@ -13,6 +13,11 @@ namespace BusinessRule.Services
             _workItemRepository = workItemRepository;
         }
 
+        /// <summary>
+        /// 取得工作項目列表
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<WorkItemDto>> GetUserWorkItemsAsync(int userId)
         {
             var workItems = await _workItemRepository.GetListWithStatusAsync(userId);
@@ -34,6 +39,12 @@ namespace BusinessRule.Services
             });
         }
 
+        /// <summary>
+        /// 取得工作項目詳細資訊，包含使用者的確認狀態
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<WorkItemDetailDto?> GetWorkItemDetailAsync(int id, int userId)
         {
             var workItem = await _workItemRepository.GetDetailWithStatusAsync(id, userId);
@@ -50,8 +61,25 @@ namespace BusinessRule.Services
                 // 邏輯判定：如果有紀錄且已確認則為 confirmed，否則為 pending
                 Status = (statusRecord?.IsConfirmed ?? false) ? "confirmed" : "pending",
                 CreatedAt = workItem.CreatedAt,
-                UpdatedAt = statusRecord?.UpdatedAt // 這邊對應你 Response 的 updatedAt
+                UpdatedAt = statusRecord?.UpdatedAt
             };
+        }
+
+        /// <summary>
+        /// 批次更新使用者對多個工作項目的確認狀態
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="workItemIds"></param>
+        /// <param name="isConfirmed"></param>
+        /// <returns></returns>
+        public async Task<bool> BatchUpdateStatusAsync(int userId, List<int> workItemIds, bool isConfirmed)
+        {
+            if (workItemIds == null || !workItemIds.Any())
+            {
+                return false;
+            }
+
+            return await _workItemRepository.UpsertUserStatusesAsync(userId, workItemIds, isConfirmed);
         }
     }
 }
