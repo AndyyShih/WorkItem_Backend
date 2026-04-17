@@ -35,5 +35,22 @@ namespace BusinessRule.Services
                 Token = token
             };
         }
+
+        public async Task<LoginResultDto?> GetUserProfileAsync(int userId)
+        {
+            var user = await _authRepository.GetByIdAsync(userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return new LoginResultDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Role = user.Role
+            };
+        }
     }
 }

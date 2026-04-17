@@ -30,7 +30,7 @@ namespace Common.Helpers
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, username),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                    new Claim("UserId", userId.ToString()),
                     new Claim(ClaimTypes.Role, role)
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(expireMinutes),
