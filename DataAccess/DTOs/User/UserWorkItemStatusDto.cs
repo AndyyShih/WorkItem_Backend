@@ -1,3 +1,5 @@
+using DataAccess.DTOs.WorkItem;
+
 namespace DataAccess.DTOs.User
 {
     public class UserWorkItemStatusDto

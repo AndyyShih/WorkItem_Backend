@@ -10,8 +10,8 @@ namespace WorkItem_Backend.DependencyInjectionTool
             services.AddSingleton<JwtHelper>();
 
             // 掃描 Service 和 Repository 類別
-            var servs = typeof(BusinessRule.Services.UserService).Assembly;
-            var repos = typeof(DataAccess.Repository.UserRepository).Assembly;
+            var servs = typeof(BusinessRule.Services.AuthService).Assembly;
+            var repos = typeof(DataAccess.Repository.AuthRepository).Assembly;
 
             // Service 類別
             var serviceTypes = servs.GetExportedTypes()
