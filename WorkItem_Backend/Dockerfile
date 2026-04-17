@@ -1,23 +1,32 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["WorkItem_Backend.csproj", "."]
-RUN dotnet restore "./WorkItem_Backend.csproj"
+
+# 修正路徑：從 D:\Project 看，這些專案檔的正確位置
+COPY ["WorkItem_Backend/WorkItem_Backend/WorkItem_Backend.csproj", "WorkItem_Backend/WorkItem_Backend/"]
+COPY ["WorkItem_Backend/BusinessRule/BusinessRule.csproj", "WorkItem_Backend/BusinessRule/"]
+COPY ["WorkItem_Backend/Common/Common.csproj", "WorkItem_Backend/Common/"]
+COPY ["WorkItem_Backend/DataAccess/DataAccess.csproj", "WorkItem_Backend/DataAccess/"]
+
+# 還原 NuGet
+RUN dotnet restore "WorkItem_Backend/WorkItem_Backend/WorkItem_Backend.csproj"
+
+# 複製整個 WorkItem_Backend 目錄進去
+# 因為 .dockerignore 可能會過濾，我們直接複製後端主目錄
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./WorkItem_Backend.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# 注意：切換到編譯目錄時，路徑也要正確
+WORKDIR "/src/WorkItem_Backend/WorkItem_Backend"
+RUN dotnet build "WorkItem_Backend.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./WorkItem_Backend.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "WorkItem_Backend.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
